@@ -38,7 +38,7 @@ def upload(request):
         result=[]
         labels=[]
         for file in files:
-            labels.append(effi(file))
+            labels.append(effi_pred(file))
         
         for file, label in zip(files, labels):
             file.seek(0)
