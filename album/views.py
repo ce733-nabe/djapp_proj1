@@ -30,12 +30,15 @@ from tensorflow.keras.applications.efficientnet import preprocess_input, decode_
 import tensorflow as tf
 import time
 
+
 model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
 def effi_pred(request):
     results=[]
-    for img in Image.objects.all():
-        img = image.load_img(img, target_size=(260, 260))
+    files = request.FILES.getlist("files[]")
+    print('files:{}'.format(files))
+    for file in files:
+        img = image.load_img(file, target_size=(260, 260))
         x = image.img_to_array(img)
         x = np.expand_dims(x, axis=0)
         x = preprocess_input(x)
@@ -44,6 +47,5 @@ def effi_pred(request):
         y = model.predict(x,steps=1)
         print(decode_predictions(y))
         results.append(y)
-        context = {'results':results}
-    return render(request, 'album/effi_pred.html', context)
+    return render(request, 'album/effi_pred.html', {'results':results})
 
