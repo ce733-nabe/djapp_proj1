@@ -9,8 +9,6 @@ from tensorflow.keras.applications.efficientnet import preprocess_input, decode_
 import tensorflow as tf
 import time
 
-from .models import Image
-
 model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
 def effi_pred(file_name):
@@ -54,7 +52,3 @@ def upload(request):
     else:
         return redirect('index')
         
-def showall(request):
-    images = Image.objects.all()
-    context = {'images':images}
-    return render(request, 'album/showall.html', context)
