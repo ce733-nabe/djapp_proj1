@@ -40,7 +40,7 @@ model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
 def effi_pred(request):
     results=[]
-    files = glob.glob(MEDIA_ROOT + '/imagese/*.jpg')
+    files = glob.glob(MEDIA_ROOT + '/images/*.jpg')
     print('files:{}'.format(files))
    
     for file in files:
