@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from .models import Image
 from .forms import ImageForm
 
+from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
+MEDIA_ROOT = BASE_DIR.joinpath('media')
+
 def showall(request):
     images = Image.objects.all()
     context = {'images':images}
@@ -36,7 +40,7 @@ model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
 def effi_pred(request):
     results=[]
-    files = glob.glob(MEDIA_ROOT + 'imagese')
+    files = glob.glob(MEDIA_ROOT + '/imagese/*.jpg')
     print('files:{}'.format(files))
    
     for file in files:
