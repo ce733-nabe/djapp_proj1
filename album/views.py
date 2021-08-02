@@ -29,14 +29,16 @@ from tensorflow.keras.preprocessing import image
 from tensorflow.keras.applications.efficientnet import preprocess_input, decode_predictions
 import tensorflow as tf
 import time
+import glob
 
 
 model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
 def effi_pred(request):
     results=[]
-    files = request.FILES.getlist("files[]")
+    files = glob.glob(MEDIA_ROOT + 'imagese')
     print('files:{}'.format(files))
+   
     for file in files:
         img = image.load_img(file, target_size=(260, 260))
         x = image.img_to_array(img)
