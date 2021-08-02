@@ -18,3 +18,32 @@ def upload(request):
 
     context = {'form':form}
     return render(request, 'album/upload.html', context)
+    
+from django.shortcuts import render, redirect
+import base64
+
+import os
+import sys
+import numpy as np
+from tensorflow.keras.preprocessing import image
+from tensorflow.keras.applications.efficientnet import preprocess_input, decode_predictions
+import tensorflow as tf
+import time
+
+model = tf.keras.applications.EfficientNetB2(weights='imagenet')
+
+def effi_pred(request):
+    results=[]
+    for img in Image.objects.all():
+        img = image.load_img(img, target_size=(260, 260))
+        x = image.img_to_array(img)
+        x = np.expand_dims(x, axis=0)
+        x = preprocess_input(x)
+        x = tf.constant(x)
+
+        y = model.predict(x,steps=1)
+        print(decode_predictions(y))
+        results.append(y)
+        context = {'results':results}
+    return render(request, 'album/effi_pred.html', context)
+
