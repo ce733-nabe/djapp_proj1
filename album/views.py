@@ -47,5 +47,7 @@ def effi_pred(request):
         y = model.predict(x,steps=1)
         print(decode_predictions(y))
         results.append(y)
-    return render(request, 'album/effi_pred.html', {'results':results})
+        
+    context = {'results':results}
+    return render(request, 'album/effi_pred.html', context)
 
