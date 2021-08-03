@@ -22,7 +22,7 @@ MEDIA_URL = '/media/'
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-i#21d%2ws3jgdw2!fl7*qn#*x2x&ukab93vm=)nu$31f5ck%rb'
+SECRET_KEY = 'ybcl3oc3q6ipi67@!(ib5w7dwet$1sev&4^1dbjwi_*^q19o@n'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -132,3 +132,9 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+import os
+import django_heroku
+
+if 'DYNO' in os.environ:
+    django_heroku.settings(locals())
