@@ -5,7 +5,15 @@ from django.conf import settings
 
 def showall(request):
     images = Image.objects.all()
-    context = {'images':images}
+    max_id = Image.objects.latest('id').id
+    obj = Image.objects.get(id = max_id)
+    
+    file_name = str(settings.BASE_DIR) + str(obj.picture.url)
+    print('file_name'.format(file_name))
+    
+    result = effi_pred(file_name)
+    
+    context = {'images':images, 'result':result}
     return render(request, 'album/showall.html', context)
     
 def upload(request):
@@ -16,15 +24,8 @@ def upload(request):
             return redirect('album:showall')
     else:
         form = ImageForm()
-        max_id = Image.objects.latest('id').id
-        obj = Image.objects.get(id = max_id)
-        
-        input_path = str(settings.BASE_DIR) + str(obj.picture.url)
-        print('input_path:{}'.format(input_path))
-        
-        y = effi_pred(input_path)
 
-    context = {'form':form, 'y':y}
+    context = {'form':form}
     return render(request, 'album/upload.html', context)
    
    
@@ -42,8 +43,8 @@ import glob
 
 def effi_pred(file):
     model = tf.keras.applications.EfficientNetB2(weights='imagenet')
-
     print('file:{}'.format(file))
+    
     img = image.load_img(file, target_size=(260, 260))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)
@@ -52,5 +53,5 @@ def effi_pred(file):
 
     y = model.predict(x,steps=1)
     print(decode_predictions(y))
-        
-    return y
+
+    return decode_predictions(y)
