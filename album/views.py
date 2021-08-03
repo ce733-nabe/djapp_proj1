@@ -1,10 +1,7 @@
 from django.shortcuts import render, redirect
 from .models import Image
 from .forms import ImageForm
-
-from pathlib import Path
-BASE_DIR = Path(__file__).resolve().parent.parent
-MEDIA_ROOT = BASE_DIR.joinpath('media')
+from django.conf import settings
 
 def showall(request):
     images = Image.objects.all()
@@ -19,10 +16,18 @@ def upload(request):
             return redirect('album:showall')
     else:
         form = ImageForm()
+        max_id = Image.objects.latest('id').id
+        obj = Image.objects.get(id = max_id)
+        
+        input_path = str(settings.BASE_DIR) + str(obj.picture.url)
+        print('input_path:{}'.format(input_path))
+        
+        y = effi_pred(input_path)
 
-    context = {'form':form}
+    context = {'form':form, 'y':y}
     return render(request, 'album/upload.html', context)
-    
+   
+   
 from django.shortcuts import render, redirect
 import base64
 
@@ -35,25 +40,17 @@ import tensorflow as tf
 import time
 import glob
 
+def effi_pred(file):
+    model = tf.keras.applications.EfficientNetB2(weights='imagenet')
 
-model = tf.keras.applications.EfficientNetB2(weights='imagenet')
+    print('file:{}'.format(file))
+    img = image.load_img(file, target_size=(260, 260))
+    x = image.img_to_array(img)
+    x = np.expand_dims(x, axis=0)
+    x = preprocess_input(x)
+    x = tf.constant(x)
 
-def effi_pred(request):
-    results=[]
-    files = glob.glob(MEDIA_ROOT + '/images/*.jpg')
-    print('files:{}'.format(files))
-   
-    for file in files:
-        img = image.load_img(file, target_size=(260, 260))
-        x = image.img_to_array(img)
-        x = np.expand_dims(x, axis=0)
-        x = preprocess_input(x)
-        x = tf.constant(x)
-
-        y = model.predict(x,steps=1)
-        print(decode_predictions(y))
-        results.append(y)
+    y = model.predict(x,steps=1)
+    print(decode_predictions(y))
         
-    context = {'results':results}
-    return render(request, 'album/effi_pred.html', context)
-
+    return y
